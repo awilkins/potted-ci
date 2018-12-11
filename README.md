@@ -10,6 +10,15 @@ It currently contains...
 * SonarQube
   * Plus a postgres for SonarQube to store it's reports in - it rapidly moans about using H2
 
+## How to use
+
+* Run `./setup.sh` once to create a local Jenkins home
+* run `docker-compose up`
+* Watch for the default admin password for Jenkins in the scrollback
+* Access 
+  * [Jenkins](http://localhost:8090)
+  * [SonarQube](http://localhost:9000)
+
 ## What it does
 
 It downloads and runs the services. All data storage is mounted in volumes or the local filesystem,
@@ -20,7 +29,7 @@ and config, etc. (so long as you use `docker-compose stop`)
 
 This stack doesn't do the initial config of Jenkins + SonarQube, including installing plugins,
 integrating them, creating webhooks, setting the admin password, etc, etc. You'll have to do that
-for yourself.
+for yourself. Watch for the initial admin password for Jenkins in the console scrollback.
 
 ## Conveniences
 
