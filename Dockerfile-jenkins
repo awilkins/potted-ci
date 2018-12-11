@@ -1,0 +1,17 @@
+FROM jenkins/jenkins:lts
+USER root
+RUN apt-get update
+RUN apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common
+RUN curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey
+RUN apt-key add /tmp/dkey
+RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable" 
+RUN apt-get update
+RUN apt-get -y install docker-ce
+RUN curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+RUN chmod +x /usr/local/bin/docker-compose
+RUN usermod -a -G docker jenkins
+
+# Uncomment/edit this if you want to simulate UID mismatch problems on the server
+# usermod -u jenkins NEWUID
+
+USER jenkins

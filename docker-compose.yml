@@ -1,0 +1,63 @@
+version: "3.3"
+
+networks:
+  jenkins:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.15.238.0/24
+
+volumes:
+  postgres-data:
+  sonar-data:
+  sonar-extensions:
+  sonar-config:
+  sonar-temp:
+
+services:
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${JENKINS_HOME}:/var/jenkins_home
+      - ${SSH_AUTH_SOCK}:/ssh-agent
+    environment:
+      - SSH_AUTH_SOCK=/ssh-agent
+    ports:
+      - "8090:8080"
+    build:
+      context: .
+      dockerfile: Dockerfile-jenkins
+    networks:
+      - jenkins
+    extra_hosts:
+      - "bridge:172.15.238.1"
+
+  sonarqube:
+    image: sonarqube:lts
+    ports:
+      - "9000:9000"
+      - "9092:9092"
+    networks:
+      - jenkins
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+    volumes:
+      - sonar-config:/opt/sonarqube/conf
+      - sonar-data:/opt/sonarqube/data
+      - sonar-extensions:/opt/sonarqube/extensions
+      - sonar-temp:/opt/sonarqube/temp
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    networks:
+      - jenkins
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - postgres-data:/var/lib/postgresql
