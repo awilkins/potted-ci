@@ -47,6 +47,10 @@ for yourself.
 
 ## Gotchas
 
+### System Limits
+
+If you see `vm.max_map_count` in your log, you need to increase it, see [this issue](https://github.com/SonarSource/docker-sonarqube/issues/282)
+
 I did all this on a Linux machine, so things may differ slightly on OSX.
 
 Folder permissions :
