@@ -36,13 +36,16 @@ services:
       - "bridge:172.15.238.1"
 
   sonarqube:
-    image: sonarqube:lts
+    image: sonarqube:latest
     ports:
       - "9000:9000"
       - "9092:9092"
     networks:
       - jenkins
     environment:
+      - sonar.jdbc.url=jdbc:postgresql://db:5432/sonar
+      - sonar.jdbc.username=sonar
+      - sonar.jdbc.password=sonar
       - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
     volumes:
       - sonar-config:/opt/sonarqube/conf
